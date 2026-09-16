@@ -11,25 +11,21 @@ return new class extends Migration
         Schema::create('job_applications', function (Blueprint $table) {
             $table->id();
 
-            $table->string('applicant_name', 150);
-            $table->string('email', 150);
-            $table->string('phone', 20)->nullable();
+            $table->foreignId('employee_id')
+                ->constrained('employees')
+                ->cascadeOnUpdate()
+                ->restrictOnDelete();
 
             $table->string('position', 150);
-
             $table->date('application_date');
-
-            $table->enum('status', [
-                'Pending',
-                'Shortlisted',
-                'Interview',
-                'Selected',
-                'Rejected'
-            ])->default('Pending');
-
+            $table->string('status', 50)->default('Applied');
             $table->text('notes')->nullable();
 
             $table->timestamps();
+
+            $table->index('position');
+            $table->index('status');
+            $table->index('application_date');
         });
     }
 
