@@ -1,53 +1,37 @@
 <x-app-layout>
-
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Profile
+            Edit Department
         </h2>
     </x-slot>
 
     <div class="py-8">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
 
-            {{-- Profile Information --}}
             <div class="bg-white p-6 shadow-sm sm:rounded-lg">
 
-                <h3 class="text-lg font-semibold text-gray-900">
-                    Profile Information
-                </h3>
-
-                <p class="mt-1 text-sm text-gray-600">
-                    Update your account information.
-                </p>
-
-                @if (session('status') === 'profile-updated')
-                    <div class="mt-4 p-3 bg-green-100 text-green-800 rounded-md">
-                        Profile updated successfully.
-                    </div>
-                @endif
-
                 <form
+                    action="{{ route('departments.update', $department) }}"
                     method="POST"
-                    action="{{ route('profile.update') }}"
-                    class="mt-6"
                 >
                     @csrf
-                    @method('PATCH')
+                    @method('PUT')
 
                     <div>
                         <label
                             for="name"
-                            class="block text-sm font-medium text-gray-700"
+                            class="block font-medium text-sm text-gray-700"
                         >
-                            Name
+                            Department Name
                         </label>
 
                         <input
                             id="name"
                             name="name"
                             type="text"
-                            value="{{ old('name', $user->name) }}"
+                            value="{{ old('name', $department->name) }}"
                             required
+                            maxlength="100"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
                         >
 
@@ -58,37 +42,45 @@
                         @enderror
                     </div>
 
-                    <div class="mt-4">
+                    <div class="mt-6">
                         <label
-                            for="email"
-                            class="block text-sm font-medium text-gray-700"
+                            for="description"
+                            class="block font-medium text-sm text-gray-700"
                         >
-                            Email
+                            Description
                         </label>
 
-                        <input
-                            id="email"
-                            name="email"
-                            type="email"
-                            value="{{ old('email', $user->email) }}"
-                            required
+                        <textarea
+                            id="description"
+                            name="description"
+                            rows="5"
+                            maxlength="1000"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                        >
+                        >{{ old('description', $department->description) }}</textarea>
 
-                        @error('email')
+                        @error('description')
                             <p class="mt-1 text-sm text-red-600">
                                 {{ $message }}
                             </p>
                         @enderror
                     </div>
 
-                    <div class="mt-6">
+                    <div class="mt-6 flex gap-3">
+
                         <button
                             type="submit"
                             class="px-5 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
                         >
-                            Save Changes
+                            Update Department
                         </button>
+
+                        <a
+                            href="{{ route('departments.index') }}"
+                            class="px-5 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
+                        >
+                            Cancel
+                        </a>
+
                     </div>
 
                 </form>
@@ -97,5 +89,4 @@
 
         </div>
     </div>
-
 </x-app-layout>
