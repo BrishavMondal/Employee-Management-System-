@@ -15,9 +15,6 @@ class Department extends Model
         'description',
     ];
 
-    /**
-     * A department has many employees.
-     */
     public function employees(): HasMany
     {
         return $this->hasMany(Employee::class);

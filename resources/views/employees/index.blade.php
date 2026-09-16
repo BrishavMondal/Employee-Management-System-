@@ -19,7 +19,7 @@
                     </h1>
 
                     <p class="mt-1 text-sm text-gray-500">
-                        Manage company employees and their departments.
+                        Manage company employees.
                     </p>
                 </div>
 
@@ -43,10 +43,167 @@
             @endif
 
 
+            {{-- Search and Filters --}}
+            <div class="bg-white shadow-sm sm:rounded-lg p-6 mb-6">
+
+                <form
+                    method="GET"
+                    action="{{ route('employees.index') }}"
+                >
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+
+                        {{-- Search --}}
+                        <div class="md:col-span-2">
+
+                            <label
+                                for="search"
+                                class="block text-sm font-medium text-gray-700 mb-1"
+                            >
+                                Search
+                            </label>
+
+                            <input
+                                type="text"
+                                id="search"
+                                name="search"
+                                value="{{ request('search') }}"
+                                placeholder="Employee ID, name, email, phone..."
+                                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                            >
+
+                        </div>
+
+
+                        {{-- Department --}}
+                        <div>
+
+                            <label
+                                for="department_id"
+                                class="block text-sm font-medium text-gray-700 mb-1"
+                            >
+                                Department
+                            </label>
+
+                            <select
+                                id="department_id"
+                                name="department_id"
+                                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                            >
+
+                                <option value="">
+                                    All Departments
+                                </option>
+
+                                @foreach ($departments as $department)
+
+                                    <option
+                                        value="{{ $department->id }}"
+                                        {{ request('department_id') == $department->id ? 'selected' : '' }}
+                                    >
+                                        {{ $department->name }}
+                                    </option>
+
+                                @endforeach
+
+                            </select>
+
+                        </div>
+
+
+                        {{-- Status --}}
+                        <div>
+
+                            <label
+                                for="status"
+                                class="block text-sm font-medium text-gray-700 mb-1"
+                            >
+                                Status
+                            </label>
+
+                            <select
+                                id="status"
+                                name="status"
+                                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                            >
+
+                                <option value="">
+                                    All Statuses
+                                </option>
+
+                                <option
+                                    value="Active"
+                                    {{ request('status') === 'Active' ? 'selected' : '' }}
+                                >
+                                    Active
+                                </option>
+
+                                <option
+                                    value="Inactive"
+                                    {{ request('status') === 'Inactive' ? 'selected' : '' }}
+                                >
+                                    Inactive
+                                </option>
+
+                                <option
+                                    value="On Leave"
+                                    {{ request('status') === 'On Leave' ? 'selected' : '' }}
+                                >
+                                    On Leave
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    {{-- Buttons --}}
+                    <div class="mt-4 flex gap-3">
+
+                        <button
+                            type="submit"
+                            class="px-5 py-2.5 bg-indigo-600 text-white rounded-md font-semibold text-sm hover:bg-indigo-700"
+                        >
+                            Search / Filter
+                        </button>
+
+                        <a
+                            href="{{ route('employees.index') }}"
+                            class="px-5 py-2.5 bg-gray-200 text-gray-800 rounded-md font-semibold text-sm hover:bg-gray-300"
+                        >
+                            Clear
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+
             {{-- Employee Table --}}
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
 
                 @if ($employees->count())
+
+                    <div class="px-6 py-4 border-b border-gray-200">
+
+                        <p class="text-sm text-gray-600">
+
+                            Showing
+                            <strong>{{ $employees->firstItem() }}</strong>
+                            to
+                            <strong>{{ $employees->lastItem() }}</strong>
+                            of
+                            <strong>{{ $employees->total() }}</strong>
+                            employees
+
+                        </p>
+
+                    </div>
+
 
                     <div class="overflow-x-auto">
 
@@ -77,10 +234,6 @@
                                     </th>
 
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                        Salary
-                                    </th>
-
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                                         Status
                                     </th>
 
@@ -101,9 +254,11 @@
 
                                         {{-- Employee ID --}}
                                         <td class="px-6 py-4 whitespace-nowrap">
+
                                             <span class="font-semibold text-gray-900">
                                                 {{ $employee->employee_id }}
                                             </span>
+
                                         </td>
 
 
@@ -132,7 +287,9 @@
                                         <td class="px-6 py-4 whitespace-nowrap">
 
                                             <span class="inline-flex px-2.5 py-1 text-xs font-semibold rounded-full bg-indigo-100 text-indigo-800">
+
                                                 {{ $employee->department->name }}
+
                                             </span>
 
                                         </td>
@@ -140,13 +297,9 @@
 
                                         {{-- Designation --}}
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+
                                             {{ $employee->designation }}
-                                        </td>
 
-
-                                        {{-- Salary --}}
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                            {{ number_format($employee->salary, 2) }}
                                         </td>
 
 
@@ -234,23 +387,39 @@
 
                 @else
 
-                    {{-- Empty State --}}
                     <div class="p-12 text-center">
 
                         <h3 class="text-lg font-semibold text-gray-900">
                             No employees found
                         </h3>
 
-                        <p class="mt-2 text-sm text-gray-500">
-                            Add your first employee to get started.
-                        </p>
+                        @if (request()->hasAny(['search', 'department_id', 'status']))
 
-                        <a
-                            href="{{ route('employees.create') }}"
-                            class="inline-flex mt-5 items-center px-5 py-2.5 bg-indigo-600 text-white rounded-md font-semibold text-xs uppercase tracking-widest hover:bg-indigo-700"
-                        >
-                            + Add Employee
-                        </a>
+                            <p class="mt-2 text-sm text-gray-500">
+                                No employees match your current search or filters.
+                            </p>
+
+                            <a
+                                href="{{ route('employees.index') }}"
+                                class="inline-flex mt-5 px-5 py-2.5 bg-gray-200 text-gray-800 rounded-md font-semibold text-sm hover:bg-gray-300"
+                            >
+                                Clear Filters
+                            </a>
+
+                        @else
+
+                            <p class="mt-2 text-sm text-gray-500">
+                                Add your first employee to get started.
+                            </p>
+
+                            <a
+                                href="{{ route('employees.create') }}"
+                                class="inline-flex mt-5 px-5 py-2.5 bg-indigo-600 text-white rounded-md font-semibold text-sm hover:bg-indigo-700"
+                            >
+                                + Add Employee
+                            </a>
+
+                        @endif
 
                     </div>
 

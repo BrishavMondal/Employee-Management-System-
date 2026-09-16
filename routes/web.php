@@ -1,43 +1,42 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\JobApplicationController;
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+*/
+
+// Home
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::middleware(['auth'])->group(function () {
 
-    // Dashboard
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+// Dashboard
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
-    // Profile
-    Route::get('/profile', [ProfileController::class, 'edit'])
-        ->name('profile.edit');
 
-    Route::patch('/profile', [ProfileController::class, 'update'])
-        ->name('profile.update');
+// Authenticated routes
+Route::middleware('auth')->group(function () {
 
-    Route::put('/password', [ProfileController::class, 'updatePassword'])
-        ->name('password.update');
-
-    Route::delete('/profile', [ProfileController::class, 'destroy'])
-        ->name('profile.destroy');
-
-    // Department Management
+    // Departments
     Route::resource('departments', DepartmentController::class);
 
-    // Employee Management
+    // Employees
     Route::resource('employees', EmployeeController::class);
 
     // Job Applications
     Route::resource('job-applications', JobApplicationController::class);
 });
 
-require __DIR__.'/auth.php';
+
+// Authentication routes
+require __DIR__ . '/auth.php';

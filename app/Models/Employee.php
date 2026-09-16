@@ -33,7 +33,7 @@ class Employee extends Model
     ];
 
     /**
-     * An employee belongs to one department.
+     * Employee belongs to a department.
      */
     public function department(): BelongsTo
     {

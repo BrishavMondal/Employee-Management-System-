@@ -1,93 +1,130 @@
 <x-app-layout>
+
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Add Department
-        </h2>
+
+        <div>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('Add Department') }}
+            </h2>
+
+            <p class="text-sm text-gray-500 mt-1">
+                Create a new company department.
+            </p>
+        </div>
+
     </x-slot>
 
     <div class="py-8">
+
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
 
-            <div class="bg-white p-6 shadow-sm sm:rounded-lg">
+            <div class="bg-white shadow-sm sm:rounded-lg">
 
-                <form action="{{ route('departments.store') }}" method="POST">
-                    @csrf
+                <div class="p-6">
 
-                    {{-- Department Name --}}
-                    <div>
-                        <label
-                            for="name"
-                            class="block font-medium text-sm text-gray-700"
-                        >
-                            Department Name
-                        </label>
+                    <form
+                        method="POST"
+                        action="{{ route('departments.store') }}"
+                        class="space-y-6"
+                    >
 
-                        <input
-                            id="name"
-                            name="name"
-                            type="text"
-                            value="{{ old('name') }}"
-                            required
-                            maxlength="100"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                            placeholder="e.g. Information Technology"
-                        >
+                        @csrf
 
-                        @error('name')
-                            <p class="mt-1 text-sm text-red-600">
-                                {{ $message }}
-                            </p>
-                        @enderror
-                    </div>
+                        {{-- Department Name --}}
+                        <div>
 
-                    {{-- Description --}}
-                    <div class="mt-6">
-                        <label
-                            for="description"
-                            class="block font-medium text-sm text-gray-700"
-                        >
-                            Description
-                        </label>
+                            <label
+                                for="name"
+                                class="block text-sm font-medium text-gray-700"
+                            >
+                                Department Name
+                            </label>
 
-                        <textarea
-                            id="description"
-                            name="description"
-                            rows="5"
-                            maxlength="1000"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                            placeholder="Describe the department..."
-                        >{{ old('description') }}</textarea>
+                            <input
+                                type="text"
+                                name="name"
+                                id="name"
+                                value="{{ old('name') }}"
+                                required
+                                maxlength="100"
+                                placeholder="e.g. Information Technology"
+                                class="mt-1 block w-full rounded-md border-gray-300
+                                       shadow-sm focus:border-indigo-500
+                                       focus:ring-indigo-500"
+                            >
 
-                        @error('description')
-                            <p class="mt-1 text-sm text-red-600">
-                                {{ $message }}
-                            </p>
-                        @enderror
-                    </div>
+                            @error('name')
+                                <p class="mt-2 text-sm text-red-600">
+                                    {{ $message }}
+                                </p>
+                            @enderror
 
-                    {{-- Buttons --}}
-                    <div class="mt-6 flex gap-3">
+                        </div>
 
-                        <button
-                            type="submit"
-                            class="px-5 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
-                        >
-                            Create Department
-                        </button>
+                        {{-- Description --}}
+                        <div>
 
-                        <a
-                            href="{{ route('departments.index') }}"
-                            class="px-5 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
-                        >
-                            Cancel
-                        </a>
+                            <label
+                                for="description"
+                                class="block text-sm font-medium text-gray-700"
+                            >
+                                Description
+                            </label>
 
-                    </div>
+                            <textarea
+                                name="description"
+                                id="description"
+                                rows="5"
+                                maxlength="1000"
+                                placeholder="Describe the department..."
+                                class="mt-1 block w-full rounded-md border-gray-300
+                                       shadow-sm focus:border-indigo-500
+                                       focus:ring-indigo-500"
+                            >{{ old('description') }}</textarea>
 
-                </form>
+                            @error('description')
+                                <p class="mt-2 text-sm text-red-600">
+                                    {{ $message }}
+                                </p>
+                            @enderror
+
+                        </div>
+
+                        {{-- Buttons --}}
+                        <div class="flex items-center justify-end gap-3">
+
+                            <a
+                                href="{{ route('departments.index') }}"
+                                class="inline-flex items-center px-4 py-2
+                                       bg-white border border-gray-300
+                                       rounded-md font-semibold text-xs
+                                       text-gray-700 uppercase tracking-widest
+                                       hover:bg-gray-50"
+                            >
+                                Cancel
+                            </a>
+
+                            <button
+                                type="submit"
+                                class="inline-flex items-center px-4 py-2
+                                       bg-gray-800 border border-transparent
+                                       rounded-md font-semibold text-xs
+                                       text-white uppercase tracking-widest
+                                       hover:bg-gray-700"
+                            >
+                                Create Department
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
 
             </div>
 
         </div>
+
     </div>
+
 </x-app-layout>

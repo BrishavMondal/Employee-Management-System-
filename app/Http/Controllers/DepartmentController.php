@@ -10,7 +10,7 @@ use Illuminate\View\View;
 class DepartmentController extends Controller
 {
     /**
-     * Display all departments.
+     * Display a listing of departments.
      */
     public function index(): View
     {
@@ -22,7 +22,7 @@ class DepartmentController extends Controller
     }
 
     /**
-     * Show the create department form.
+     * Show the form for creating a new department.
      */
     public function create(): View
     {
@@ -30,7 +30,7 @@ class DepartmentController extends Controller
     }
 
     /**
-     * Store a new department.
+     * Store a newly created department.
      */
     public function store(Request $request): RedirectResponse
     {
@@ -56,17 +56,21 @@ class DepartmentController extends Controller
     }
 
     /**
-     * Display a specific department.
+     * Display the specified department.
      */
     public function show(Department $department): View
     {
-        $department->load('employees');
+        $department->load([
+            'employees' => function ($query) {
+                $query->latest();
+            },
+        ]);
 
         return view('departments.show', compact('department'));
     }
 
     /**
-     * Show the edit department form.
+     * Show the form for editing the specified department.
      */
     public function edit(Department $department): View
     {
@@ -74,7 +78,7 @@ class DepartmentController extends Controller
     }
 
     /**
-     * Update an existing department.
+     * Update the specified department.
      */
     public function update(
         Request $request,
@@ -102,14 +106,17 @@ class DepartmentController extends Controller
     }
 
     /**
-     * Delete a department.
+     * Remove the specified department.
      */
     public function destroy(Department $department): RedirectResponse
     {
         if ($department->employees()->exists()) {
             return redirect()
                 ->route('departments.index')
-                ->with('error', 'Cannot delete a department that has employees.');
+                ->with(
+                    'error',
+                    'This department cannot be deleted because it has employees assigned to it.'
+                );
         }
 
         $department->delete();

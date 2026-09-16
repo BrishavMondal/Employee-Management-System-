@@ -13,14 +13,62 @@ class EmployeeController extends Controller
     /**
      * Display all employees.
      */
-    public function index(): View
-    {
-        $employees = Employee::with('department')
-            ->latest()
-            ->paginate(10);
+    public function index(Request $request): View
+{
+    $query = Employee::with('department');
 
-        return view('employees.index', compact('employees'));
+    // Search by employee ID, name, email, phone, or designation
+    if ($request->filled('search')) {
+
+        $search = $request->search;
+
+        $query->where(function ($q) use ($search) {
+
+            $q->where('employee_id', 'like', "%{$search}%")
+                ->orWhere('first_name', 'like', "%{$search}%")
+                ->orWhere('last_name', 'like', "%{$search}%")
+                ->orWhere('email', 'like', "%{$search}%")
+                ->orWhere('phone', 'like', "%{$search}%")
+                ->orWhere('designation', 'like', "%{$search}%");
+
+        });
     }
+
+    // Filter by department
+    if ($request->filled('department_id')) {
+
+        $query->where(
+            'department_id',
+            $request->department_id
+        );
+    }
+
+    // Filter by employee status
+    if ($request->filled('status')) {
+
+        $query->where(
+            'status',
+            $request->status
+        );
+    }
+
+    // Latest employees first
+    $employees = $query
+        ->latest()
+        ->paginate(10)
+        ->withQueryString();
+
+    // Departments for filter dropdown
+    $departments = Department::orderBy('name')->get();
+
+    return view(
+        'employees.index',
+        compact(
+            'employees',
+            'departments'
+        )
+    );
+}
 
     /**
      * Show the create employee form.
