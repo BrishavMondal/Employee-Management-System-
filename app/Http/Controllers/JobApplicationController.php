@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreJobApplicationRequest;
+use App\Http\Requests\UpdateJobApplicationRequest;
 use App\Models\Employee;
 use App\Models\JobApplication;
 use Illuminate\Http\RedirectResponse;
@@ -10,9 +12,6 @@ use Illuminate\View\View;
 
 class JobApplicationController extends Controller
 {
-    /**
-     * Display job applications.
-     */
     public function index(Request $request): View
     {
         $query = JobApplication::with('employee');
@@ -48,9 +47,6 @@ class JobApplicationController extends Controller
         );
     }
 
-    /**
-     * Show create form.
-     */
     public function create(): View
     {
         $employees = Employee::orderBy('first_name')
@@ -63,50 +59,16 @@ class JobApplicationController extends Controller
         );
     }
 
-    /**
-     * Store application.
-     */
-    public function store(Request $request): RedirectResponse
-    {
-        $validated = $request->validate([
-            'employee_id' => [
-                'required',
-                'exists:employees,id',
-            ],
-
-            'position' => [
-                'required',
-                'string',
-                'max:150',
-            ],
-
-            'application_date' => [
-                'required',
-                'date',
-            ],
-
-            'status' => [
-                'required',
-                'in:Applied,Shortlisted,Interview,Selected,Rejected',
-            ],
-
-            'notes' => [
-                'nullable',
-                'string',
-                'max:2000',
-            ],
-        ]);
-
-        JobApplication::create($validated);
+    public function store(
+        StoreJobApplicationRequest $request
+    ): RedirectResponse {
+        JobApplication::create($request->validated());
 
         return redirect()
             ->route('job-applications.index')
             ->with('success', 'Job application created successfully.');
     }
 
-    /**
-     * Display application.
-     */
     public function show(JobApplication $jobApplication): View
     {
         $jobApplication->load('employee.department');
@@ -117,9 +79,6 @@ class JobApplicationController extends Controller
         );
     }
 
-    /**
-     * Show edit form.
-     */
     public function edit(JobApplication $jobApplication): View
     {
         $employees = Employee::orderBy('first_name')
@@ -132,52 +91,17 @@ class JobApplicationController extends Controller
         );
     }
 
-    /**
-     * Update application.
-     */
     public function update(
-        Request $request,
+        UpdateJobApplicationRequest $request,
         JobApplication $jobApplication
     ): RedirectResponse {
-        $validated = $request->validate([
-            'employee_id' => [
-                'required',
-                'exists:employees,id',
-            ],
-
-            'position' => [
-                'required',
-                'string',
-                'max:150',
-            ],
-
-            'application_date' => [
-                'required',
-                'date',
-            ],
-
-            'status' => [
-                'required',
-                'in:Applied,Shortlisted,Interview,Selected,Rejected',
-            ],
-
-            'notes' => [
-                'nullable',
-                'string',
-                'max:2000',
-            ],
-        ]);
-
-        $jobApplication->update($validated);
+        $jobApplication->update($request->validated());
 
         return redirect()
             ->route('job-applications.index')
             ->with('success', 'Job application updated successfully.');
     }
 
-    /**
-     * Delete application.
-     */
     public function destroy(
         JobApplication $jobApplication
     ): RedirectResponse {
